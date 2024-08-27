@@ -22,6 +22,8 @@ def extract():
                 print(f"Successfully downloaded: {url}")
             except requests.exceptions.RequestException as e:
                 raise Exception(f"Failed to download {url}: {e}")
+            except FileExistsError as e:
+                print(f"File already exists: {e}")
 
     def move_data_to_folder():
         dest_dir = "/usr/local/airflow/include/data"

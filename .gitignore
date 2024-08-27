@@ -10,3 +10,4 @@ webserver_config.py
 airflow.cfg
 airflow.db
 include/etl/censo/data
+include/gcp/service_account.json
