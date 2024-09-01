@@ -113,6 +113,12 @@ def censo():
         use_native_support=True,
     )
 
+    @task()
+    def check_load(scan_name='check_load', checks_subpath='sources'):
+        from include.soda.check_function import check
+
+        return check(scan_name, checks_subpath)
+
     dbt_transformation = DbtTaskGroup(
         group_id='transform',
         project_config=DBT_PROJECT_CONFIG,
@@ -123,6 +129,14 @@ def censo():
         )
     )
 
-    chain(download_censo, convert_to_parquet(),upload_to_gcs(), remove_data(), create_censo_dataset, cursos_gcs_to_stg, ies_gcs_to_stg, dbt_transformation)
+    @task()
+    def check_transform(scan_name='check_transform', checks_subpath='dimensions'):
+        from include.soda.check_function import check
+
+        return check(scan_name, checks_subpath)
+
+    chain(download_censo, convert_to_parquet(),upload_to_gcs(),
+          remove_data(), create_censo_dataset, cursos_gcs_to_stg, ies_gcs_to_stg,
+           check_load(), dbt_transformation, check_transform())
 
 censo()

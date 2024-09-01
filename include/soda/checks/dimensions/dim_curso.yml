@@ -1,0 +1,5 @@
+checks for fact_enrollments:
+  - min(qtdMatriculado) >= 0
+
+  - sum(qtdMatriculado) >= 0
+  - sum(qtdMatriculadoFeminino) >= 0

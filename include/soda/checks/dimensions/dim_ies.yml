@@ -1,0 +1,4 @@
+checks for dim_ies:
+  - schema:
+      fail:
+        when required column missing: [idMantenedora, nomeMantenedora, idIES, siglaIes, nomeIes, qtdTotalDocentes, qtdTotalDocentesAtivos]

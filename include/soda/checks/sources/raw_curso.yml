@@ -1,0 +1,10 @@
+checks for stg_cursos:
+  - min(QT_CURSO) >= 0
+  - min(QT_VG_TOTAL) >= 0
+  - min(QT_MAT) >= 0
+
+  - sum(QT_MAT) >= 0
+  - sum(QT_VG_TOTAL) >= 0
+
+  - max(TP_MODALIDADE_ENSINO) <= 2
+  - max(TP_GRAU_ACADEMICO) <= 4

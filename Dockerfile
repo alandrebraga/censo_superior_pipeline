@@ -1,5 +1,6 @@
-FROM quay.io/astronomer/astro-runtime:12.0.0
+FROM quay.io/astronomer/astro-runtime:11.6.0
 
+RUN pip install --no-cache-dir soda-core-bigquery soda-core-scientific
 
 RUN python -m venv etl_env && source etl_env/bin/activate && \
     pip install requests==2.28.1 && deactivate
