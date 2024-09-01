@@ -10,6 +10,10 @@ from astro.files import File
 from astro.constants import FileType
 from astro.sql.table import Table, Metadata
 from astro import sql as aql
+from include.dbt.cosmos_config import DBT_PROJECT_CONFIG, DBT_CONFIG
+from cosmos.config import RenderConfig
+from cosmos.constants import LoadMode
+from cosmos import DbtTaskGroup
 
 @dag(
     start_date=datetime(2024, 1, 1),
@@ -97,7 +101,7 @@ def censo():
     ies_gcs_to_stg = aql.load_file(
         task_id="ies_gcs_to_stg",
         input_file = File(
-            f'gs://{bucket_name}/raw/MICRODADOS_CADASTRO_IES_2022.parquet ',
+            f'gs://{bucket_name}/raw/MICRODADOS_CADASTRO_IES_2022.parquet',
             conn_id='gcp',
             filetype=FileType.PARQUET,
         ),
@@ -109,6 +113,16 @@ def censo():
         use_native_support=True,
     )
 
-    chain(download_censo, convert_to_parquet(),upload_to_gcs(), remove_data(), create_censo_dataset, cursos_gcs_to_stg, ies_gcs_to_stg)
+    dbt_transformation = DbtTaskGroup(
+        group_id='transform',
+        project_config=DBT_PROJECT_CONFIG,
+        profile_config=DBT_CONFIG,
+        render_config=RenderConfig(
+            load_method=LoadMode.DBT_LS,
+            select=['path:models']
+        )
+    )
+
+    chain(download_censo, convert_to_parquet(),upload_to_gcs(), remove_data(), create_censo_dataset, cursos_gcs_to_stg, ies_gcs_to_stg, dbt_transformation)
 
 censo()
