@@ -1,0 +1,14 @@
+name: 'censo_superior'
+
+config-version: 2
+version: '0.1'
+
+profile: 'censo_superior'
+
+model-paths: ["models"]
+
+require-dbt-version: [">=1.0.0", "<2.0.0"]
+
+models:
+  censo_superior:
+      materialized: table

@@ -1,0 +1,11 @@
+censo_superior:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: service-account
+      project: andreb-censosuperior
+      dataset: censo_superior
+      threads: 4
+      keyfile: /usr/local/airflow/include/gcp/service_account.json
+      OPTIONAL_CONFIG: VALUE

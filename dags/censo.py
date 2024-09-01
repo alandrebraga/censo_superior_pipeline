@@ -19,8 +19,8 @@ from astro import sql as aql
     tags=["dag"],
 )
 def censo():
-    project_name = "andremallmann_censosuperior"
-    bucket_name = "andremallmann_censosuperior"
+    project_name = "andreb_censosuperior"
+    bucket_name = "andreb_censosuperior"
 
     download_censo = extract()
 
@@ -52,7 +52,7 @@ def censo():
 
         for csv_file in csv_files:
             local_file_path = os.path.join(data_folder, csv_file)
-            gcs_file_path = f"{bucket_name}/raw/{csv_file}"
+            gcs_file_path = f"raw/{csv_file}"
 
             upload = LocalFilesystemToGCSOperator(
                 task_id=f"upload_{csv_file}",
@@ -79,10 +79,10 @@ def censo():
         gcp_conn_id = "gcp"
     )
 
-    retail_gcs_to_stg = aql.load_file(
-        task_id="retail_gcs_to_stg",
+    cursos_gcs_to_stg = aql.load_file(
+        task_id="curso_gcs_to_stg",
         input_file = File(
-            f'gs://{project_name}/{bucket_name}/raw/MICRODADOS_CADASTRO_CURSOS_2022.parquet',
+            f'gs://{bucket_name}/raw/MICRODADOS_CADASTRO_CURSOS_2022.parquet',
             conn_id='gcp',
             filetype=FileType.PARQUET,
         ),
@@ -94,7 +94,21 @@ def censo():
         use_native_support=True,
     )
 
+    ies_gcs_to_stg = aql.load_file(
+        task_id="ies_gcs_to_stg",
+        input_file = File(
+            f'gs://{bucket_name}/raw/MICRODADOS_CADASTRO_IES_2022.parquet ',
+            conn_id='gcp',
+            filetype=FileType.PARQUET,
+        ),
+        output_table = Table(
+            name="stg_ies",
+            conn_id="gcp",
+            metadata = Metadata(schema="censo_superior"),
+        ),
+        use_native_support=True,
+    )
 
-    chain(download_censo, convert_to_parquet(),upload_to_gcs(), remove_data(), create_censo_dataset, retail_gcs_to_stg)
+    chain(download_censo, convert_to_parquet(),upload_to_gcs(), remove_data(), create_censo_dataset, cursos_gcs_to_stg, ies_gcs_to_stg)
 
 censo()

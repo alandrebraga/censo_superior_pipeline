@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: censo_superior
+    database: 'andreb-censosuperior'
+
+    tables:
+        - name: stg_cursos
+        - name: stg_ies
